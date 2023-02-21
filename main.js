@@ -5,6 +5,7 @@ let board;
 let context;
 
 let curPiece = [];
+let allPieces = [];
 
 window.onload = function () {
   board = document.getElementById("board");
@@ -77,10 +78,16 @@ function createPiece() {
 }
 
 function movePiece() {
+  let bottom = false;
   for (let i = 0; i < curPiece.length; i++) {
     curPiece[i][1] += blockSize;
     if (curPiece[i][1] === blockSize * rows) {
+      bottom = true;
     }
+  }
+  if (bottom) {
+    allPieces.push(JSON.parse(JSON.stringify(allPieces)));
+    createPiece();
   }
 }
 
@@ -93,5 +100,17 @@ function drawPiece() {
       blockSize + 1,
       blockSize + 1
     );
+  }
+  for (let i = 0; i < allPieces.length; i++) {
+    for (let j = 0; j < allPieces[i].length; j++) {
+      console.log(allPieces[i][j][0], allPieces[i][j][1]);
+      context.fillRect(
+        allPieces[i][j][0],
+        allPieces[i][j][1],
+        blockSize + 1,
+        blockSize + 1
+      );
+      // context.fillRect(100, allPieces[i][j][1], blockSize + 1, blockSize + 1);
+    }
   }
 }
