@@ -12,12 +12,15 @@ window.onload = function () {
   board.width = cols * blockSize;
   context = board.getContext("2d");
 
-  update();
+  createPiece();
+  drawPiece();
+  setInterval(update, 500);
 };
 
 function update() {
   updateBoard();
-  createPiece();
+  movePiece();
+  drawPiece();
 }
 
 function updateBoard() {
@@ -33,22 +36,62 @@ function updateBoard() {
 }
 
 function createPiece() {
-  const num = curPiece.Math.floor(Math.random() * 7);
+  const num = Math.floor(Math.random() * 7);
   curPiece.length = 0;
   if (num === 0) {
-    curPiece.push([4, 0]);
-    curPiece.push([5, 0]);
-    curPiece.push([4, 1]);
-    curPiece.push([5, 1]);
+    curPiece.push([4 * blockSize, 0 * blockSize]);
+    curPiece.push([5 * blockSize, 0 * blockSize]);
+    curPiece.push([4 * blockSize, 1 * blockSize]);
+    curPiece.push([5 * blockSize, 1 * blockSize]);
   } else if (num === 1) {
-    curPiece.push([4, 0]);
-    curPiece.push([4, 0]);
-    curPiece.push([4, 0]);
-    curPiece.push([4, 0]);
+    curPiece.push([3 * blockSize, 0 * blockSize]);
+    curPiece.push([4 * blockSize, 0 * blockSize]);
+    curPiece.push([4 * blockSize, 1 * blockSize]);
+    curPiece.push([5 * blockSize, 1 * blockSize]);
   } else if (num === 2) {
+    curPiece.push([4 * blockSize, 0 * blockSize]);
+    curPiece.push([5 * blockSize, 0 * blockSize]);
+    curPiece.push([3 * blockSize, 1 * blockSize]);
+    curPiece.push([4 * blockSize, 1 * blockSize]);
   } else if (num === 3) {
+    curPiece.push([4 * blockSize, 0 * blockSize]);
+    curPiece.push([3 * blockSize, 1 * blockSize]);
+    curPiece.push([4 * blockSize, 1 * blockSize]);
+    curPiece.push([5 * blockSize, 1 * blockSize]);
   } else if (num === 4) {
+    curPiece.push([3 * blockSize, 0 * blockSize]);
+    curPiece.push([4 * blockSize, 1 * blockSize]);
+    curPiece.push([5 * blockSize, 1 * blockSize]);
+    curPiece.push([3 * blockSize, 1 * blockSize]);
   } else if (num === 5) {
+    curPiece.push([5 * blockSize, 0 * blockSize]);
+    curPiece.push([3 * blockSize, 1 * blockSize]);
+    curPiece.push([4 * blockSize, 1 * blockSize]);
+    curPiece.push([5 * blockSize, 1 * blockSize]);
   } else if (num === 6) {
+    curPiece.push([3 * blockSize, 0 * blockSize]);
+    curPiece.push([4 * blockSize, 0 * blockSize]);
+    curPiece.push([5 * blockSize, 0 * blockSize]);
+    curPiece.push([6 * blockSize, 0 * blockSize]);
+  }
+}
+
+function movePiece() {
+  for (let i = 0; i < curPiece.length; i++) {
+    curPiece[i][1] += blockSize;
+    if (curPiece[i][1] === blockSize * rows) {
+    }
+  }
+}
+
+function drawPiece() {
+  context.fillStyle = "red";
+  for (let i = 0; i < curPiece.length; i++) {
+    context.fillRect(
+      curPiece[i][0],
+      curPiece[i][1],
+      blockSize + 1,
+      blockSize + 1
+    );
   }
 }
