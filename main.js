@@ -6,6 +6,7 @@ let context;
 
 let curPiece = [];
 let allPieces = [];
+let allPiecesSet = new Set();
 
 window.onload = function () {
   board = document.getElementById("board");
@@ -20,8 +21,9 @@ window.onload = function () {
 
 function update() {
   updateBoard();
-  movePiece();
+  updatePiece();
   drawPiece();
+  movePiece();
 }
 
 function updateBoard() {
@@ -77,16 +79,26 @@ function createPiece() {
   }
 }
 
-function movePiece() {
-  let bottom = false;
+function updatePiece() {
+  let flag = false;
   for (let i = 0; i < curPiece.length; i++) {
     curPiece[i][1] += blockSize;
-    if (curPiece[i][1] === blockSize * rows) {
-      bottom = true;
+    if (curPiece[i][1] === blockSize * (rows - 1)) {
+      flag = true;
+    }
+    for (let j = 0; j < allPieces.length; j++) {
+      for (let k = 0; k < allPieces[j].length; k++) {
+        if (
+          curPiece[i][0] === allPieces[j][k][0] &&
+          curPiece[i][1] === allPieces[j][k][1] - blockSize
+        ) {
+          flag = true;
+        }
+      }
     }
   }
-  if (bottom) {
-    allPieces.push(JSON.parse(JSON.stringify(allPieces)));
+  if (flag) {
+    allPieces.push(JSON.parse(JSON.stringify(curPiece)));
     createPiece();
   }
 }
@@ -103,14 +115,31 @@ function drawPiece() {
   }
   for (let i = 0; i < allPieces.length; i++) {
     for (let j = 0; j < allPieces[i].length; j++) {
-      console.log(allPieces[i][j][0], allPieces[i][j][1]);
       context.fillRect(
         allPieces[i][j][0],
         allPieces[i][j][1],
         blockSize + 1,
         blockSize + 1
       );
+
       // context.fillRect(100, allPieces[i][j][1], blockSize + 1, blockSize + 1);
     }
   }
+}
+
+function movePiece() {
+  window.onkeydown = function (e) {
+    if (e.code === "ArrowRight") {
+      for (let i = 0; i < curPiece.length; i++) {
+        curPiece[i][0] += blockSize;
+      }
+    }
+    if (e.code === "ArrowLeft") {
+      for (let i = 0; i < curPiece.length; i++) {
+        curPiece[i][0] -= blockSize;
+      }
+    }
+    updateBoard();
+    drawPiece();
+  };
 }
