@@ -1,3 +1,27 @@
+/*
+   ##
+0: ##
+    
+    ##
+1:   ##
+
+    ##
+2: ##
+
+    #
+3: ###
+
+   #
+4: ###
+
+     #
+5: ###
+
+
+6: ####
+
+*/
+
 const blockSize = 25;
 const rows = 20;
 const cols = 10;
@@ -14,6 +38,7 @@ window.onload = function () {
   board.width = cols * blockSize;
   context = board.getContext("2d");
 
+  updateBoard();
   createPiece();
   drawPiece();
   setInterval(update, 500);
@@ -82,24 +107,33 @@ function createPiece() {
 function updatePiece() {
   let flag = false;
   for (let i = 0; i < curPiece.length; i++) {
+    if (curPiece[i][1] === blockSize * (rows - 1)) {
+      flag = true;
+    }
+    if (
+      allPiecesSet.has([curPiece[i][0], curPiece[i][1] + blockSize].toString())
+    ) {
+      flag = true;
+    }
+  }
+  if (flag) {
+    for (let i = 0; i < curPiece.length; i++) {
+      allPieces.push([...curPiece[i]]);
+      allPiecesSet.add(curPiece[i].toString());
+    }
+    createPiece();
+  }
+
+  for (let i = 0; i < curPiece.length; i++) {
     curPiece[i][1] += blockSize;
     if (curPiece[i][1] === blockSize * (rows - 1)) {
       flag = true;
     }
-    for (let j = 0; j < allPieces.length; j++) {
-      for (let k = 0; k < allPieces[j].length; k++) {
-        if (
-          curPiece[i][0] === allPieces[j][k][0] &&
-          curPiece[i][1] === allPieces[j][k][1] - blockSize
-        ) {
-          flag = true;
-        }
-      }
+    if (
+      allPiecesSet.has([curPiece[i][0], curPiece[i][1] + blockSize].toString())
+    ) {
+      flag = true;
     }
-  }
-  if (flag) {
-    allPieces.push(JSON.parse(JSON.stringify(curPiece)));
-    createPiece();
   }
 }
 
@@ -114,16 +148,12 @@ function drawPiece() {
     );
   }
   for (let i = 0; i < allPieces.length; i++) {
-    for (let j = 0; j < allPieces[i].length; j++) {
-      context.fillRect(
-        allPieces[i][j][0],
-        allPieces[i][j][1],
-        blockSize + 1,
-        blockSize + 1
-      );
-
-      // context.fillRect(100, allPieces[i][j][1], blockSize + 1, blockSize + 1);
-    }
+    context.fillRect(
+      allPieces[i][0],
+      allPieces[i][1],
+      blockSize + 1,
+      blockSize + 1
+    );
   }
 }
 
@@ -131,10 +161,32 @@ function movePiece() {
   window.onkeydown = function (e) {
     if (e.code === "ArrowRight") {
       for (let i = 0; i < curPiece.length; i++) {
+        if (
+          curPiece[i][0] + blockSize === blockSize * cols ||
+          allPiecesSet.has(
+            [curPiece[i][0] + blockSize, curPiece[i][1]].toString()
+          )
+        ) {
+          return;
+        }
+      }
+
+      for (let i = 0; i < curPiece.length; i++) {
         curPiece[i][0] += blockSize;
       }
     }
     if (e.code === "ArrowLeft") {
+      for (let i = 0; i < curPiece.length; i++) {
+        if (
+          curPiece[i][0] === 0 * cols ||
+          allPiecesSet.has(
+            [curPiece[i][0] - blockSize, curPiece[i][1]].toString()
+          )
+        ) {
+          return;
+        }
+      }
+
       for (let i = 0; i < curPiece.length; i++) {
         curPiece[i][0] -= blockSize;
       }
